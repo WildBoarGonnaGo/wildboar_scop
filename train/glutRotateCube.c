@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by lchantel on 19.09.2021.
 // Небольшая программа по вращению куба с использованием иструментов GLUT
 
@@ -58,7 +58,7 @@ void    display(void) {
 
 void    spinDisplay(void) {
 	spin = spin + 1.0;
-	spin -= (spin > 360) ? 360 : 0;
+    spin -= (spin > 360.0) ? 360.0 : 0;
 	/*void glutPostRedisplay - помечает, что текущее окно требует перерисовки*/
 	glutPostRedisplay();
 }
@@ -73,8 +73,77 @@ void    reshape(int w, int h) {
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	/*
 	 void glMatrixMode(GLenum mode) - определяет какая матрица является текущей
-	 mode - переменная которая обозначает стэк матриц, который будет выбран для последуюших операций
+     mode - переменная которая обозначает стэк матриц, который будет выбран для последуюших операций.
+     Всего доступно 3 значения: GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE, GL_COLOR. glMatrixMode
+     устанавливает новый режим матриц. Переменная mode может принять одно из 4 значений:
+         GL_MODEVLIEW - применяет последующие матричные операции к стэку матриц просмотра модели
+         GL_PROJECTION - применяет последующие матричные операции к стэку матриц проекции
+         GL_TEXTURE - применяет последующие матричные операции к стэку матриц текстур
+         GL_COLOR - применяет последующие матричные операции к стэку матриц цвета.
+     Чтобы установить, какой стэк матриц является объектом применения матричных операций, сделайте
+     вызов функции glGet с аргументом GL_MATRIX_MODE. Изначальное значение GL_MATRIX_MODE - GL_MODELVIEW
 	 * */
 	glMatrixMode(GL_PROJECTION);
+    //Заменяет текущую матрицу единичной матрицей (identity matrix - единичная матрица)
+    glLoadIdentity();
+    /*
+    void glOrtho(GLdouble left, GLdouble right, GLdobule bottom,
+                 GLdouble top, GLdouble nearVal, GLdouble farVal);
+    left, right - определяет координаты левой и правой вертикальных отсекающих плоскостей
+    top, bottom - определяет координаты верхней и нижней горизонтальных отсекаюищх плоскостей
+    nearVal, farVal - определяет расстояние близжайших и наиболее удаленнных по глубине отсекаемые
+    плоскости. Если значение отрицательное, то плоскость находится за спиной наблюдателя.
+
+    ОПИСАНИЕ.
+
+    glOrtho описывает производимую трансформаицю, для того, чтобы добиться параллельного процерирования.
+    Текущая матрица (см. glMatrixMode) умножается на эту матрицу и результат замещает текущаю матрицу,
+    как если бы glMultMatrix была вызвана следующей матрицей, как своим аргументом:
+
+    2 / (right - left)   0                    0                          t_x
+    0                    2 / (top - bottom)   0                          t_y
+    0                    0                    -2 / (farVal - nearVal)    t_z
+    0                    0                    0                          1
+
+    где,
+
+    t_x = - (right + left) / (right - left)
+    t_y = - (top + bottom) / (top- bottom)
+    t_z = - (farVal + nearVal) / (farVal - nearVal)
+    */
+    glOrtho(-50.0, 50.0, -50.0, 50.0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
+/*При нажатий левой кнопки зарегистрировать
+функцию фоновой обработки (поворота)
+при нажатии правой, отменить регистрацию*/
+
+void    mouse(int button, int state, int x, int y) {
+    switch (button) {
+    case GLUT_LEFT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(spinDisplay);
+        break;
+    case GLUT_RIGHT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(NULL);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    glutInit(&argc, argv);
+    //Запросить режим двойной буферизации
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitWindowSize(600, 400);
+    glutInitWindowSize(800, 800);
+    glutCreateWindow("Double buffering and animation");
+    init();
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutMouseFunc(mouse);
+    glutMainLoop();
+
+    return (0);
+}
