@@ -1,7 +1,6 @@
 ﻿#include <GL/glut.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
 # define SINDELTA 0.00872653549837393496
 # define COSDELTA 0.99996192306417128874
 # define GL_CIRCLE_ALLOC 4320
@@ -134,8 +133,8 @@ void    reshape(int width, int height) {
 int     main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(200, 200);
-    glutInitWindowPosition(600, 600);
+    glutInitWindowSize(800, 800);
+    glutInitWindowPosition(1500, 600);
     glutCreateWindow("OpenGL funny face");
     init();
     glutDisplayFunc(display);
