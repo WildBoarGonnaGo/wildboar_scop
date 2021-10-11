@@ -5,5 +5,5 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_COMPILER clang)
 add_compile_options(-g)
 
-add_executable(wildboar_scop train/icosahedron_3d.c)
+add_executable(wildboar_scop train/icosahedron_3d.c train/transform_cube.c)
 target_link_libraries(wildboar_scop -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lm)
