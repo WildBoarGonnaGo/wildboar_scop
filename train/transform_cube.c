@@ -17,7 +17,8 @@ void    display() {
 	glLoadIdentity();
 
 	/*View Matrix camera*/
-    gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	glLineWidth(3);
+    gluLookAt(1.5, 1.5, 1.5, 0.0, 0.0, 0.0, -0.577, -0.577, 0.577);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     /*Model transformation*/
@@ -59,7 +60,9 @@ void	reshape(int width, int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-0.750, 0.750, -0.750, 0.750, 1, 20);
-    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glOrtho(-1.5, 1.5, -1.5, 1.5, 1, 20);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 int		main(int argc, char *argv[]) {
@@ -75,5 +78,3 @@ int		main(int argc, char *argv[]) {
 
     return (0);
 }
-
-
