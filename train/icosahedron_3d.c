@@ -1,9 +1,23 @@
+int glutWindowID = 0;
+
 #include <unistd.h>
-#include <GL/glut.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <math.h>
+#ifdef __APPLE__
+int ifDarwin = 1;
+#   define GL_SILENCE_DEPRECATION
+#   include <OpenGL/gl.h>
+#   include <GLUT/glut.h>
+void    winCloseFunc() {
+    glutDestroyWindow(glutWindowID);
+    exit (0);
+}
+#else
+#   include <GL/glut.h>
+int ifDarwin = 0;
+#endif
 #define GOLDRATIO 1.6180339887498948482
 #define EDGE 1
 
@@ -150,10 +164,12 @@ int     main(int argc, char *argv[]) {
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(1500, 500);
-	glutCreateWindow("OpenGL Icosahedron 3D");
+	glutWindowID = glutCreateWindow("OpenGL Icosahedron 3D");
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+    if (ifDarwin)
+        glutWMCloseFunc(winCloseFunc);
 	glutMainLoop();
 
     return (0);
