@@ -9,6 +9,10 @@
 #include <string.h>
 #define GL_SILENCE_DEPRECATION
 
+typedef struct	viewModeRatio {
+
+};
+
 void	init() {
 	glClearColor(0, 0, 0, 0);
 	glMatrixMode(GL_MODELVIEW);
@@ -30,7 +34,12 @@ void	display(GLFWwindow *window) {
 }
 
 void	reshape(GLFWwindow *window, int width, int height) {
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	GLint xw, yw;
+	xw = width / 2;
+	yw = height / 2;
+
+	glViewport(xw, yw, (GLsizei)width, (GLsizei)height);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -0.5, 0.5);
