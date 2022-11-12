@@ -2,13 +2,17 @@
 // Created by lchantel on 02.10.2021.
 //
 
-#include <GL/glut.h>
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h>
+#include <OpenGL/glu.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #define SINDELTA 0.00872653549837393496
 #define COSDELTA 0.99996192306417128874
 #define VERTCOUNT 4320
+
+int		windowId;
 
 void    init() {
 	glClearColor((GLclampf)(248.0 / 255.0), (GLclampf)(218.0 / 255.0), (GLclampf)(190. / 255.0), 0);
@@ -107,15 +111,21 @@ void    reshape(int width, int height) {
 	glOrtho(0, 200, 0, 200, -1, 1);
 }
 
+void	udefGLUTWinClose() {
+	glutDestroyWindow(glutGetWindow());
+	exit(0);
+}
+
 int     main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(1500, 500);
-	glutCreateWindow("OpenGL final vertices trial");
+	windowId = glutCreateWindow("OpenGL final vertices trial");
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutWMCloseFunc(udefGLUTWinClose);
 	glutMainLoop();
 
 	return (0);
