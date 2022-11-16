@@ -26,11 +26,11 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,1);
+	glfwWindowHint(GL_MAJOR_VERSION, 3);
+	glfwWindowHint(GL_MINOR_VERSION, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	/* Create a windowed mode window and its OpenGL context */
+
 	window = glfwCreateWindow( 1280, 720, "Hello World", NULL, NULL );
 	if (!window)
 	{
