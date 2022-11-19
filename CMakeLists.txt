@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.7.2)
-project(wildboar_scop CXX)
+project(wildboar_scop C)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_COMPILER g++)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_COMPILER clang)
+# set_source_files_properties(./glad/src/glad.c PROPERTIES LANGUAGE CXX )
 add_compile_options(-g)
 
-add_executable(${PROJECT_NAME} train/glfw_elembuffer_sample_3.cpp ${PROJECT_SOURCE_DIR}/glad/src/glad.c)
+add_executable(${PROJECT_NAME} ./train/exc_2.c ./glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/Cellar/glfw/3.3.8/include/)
 target_link_directories(${PROJECT_NAME} PUBLIC "/opt/homebrew/lib")
