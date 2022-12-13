@@ -6,9 +6,28 @@ set(CMAKE_C_COMPILER clang)
 # set_source_files_properties(./glad/src/glad.c PROPERTIES LANGUAGE CXX )
 add_compile_options(-g)
 
-add_executable(${PROJECT_NAME} ./train/exc_2.c ./glad/src/glad.c)
+# add_executable(${PROJECT_NAME} ./train/glfw_tri_palete.c ./glad/src/glad.c)
+add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
+        bmp_process/bmp_proc_dtor.c
+        bmp_process/delete_bmpProc.c
+        bmp_process/new_bmpProc.c
+        matrix/delete_matrix.c
+        matrix/matrix_add.c
+        matrix/matrix_ctr.c
+        matrix/matrix_ctr_2.c
+        matrix/matrix_dtr.c
+        matrix/matrix_multi.c
+        matrix/matrix_scal_add.c
+        matrix/matrix_scal_multi.c
+        matrix/matrix_test.c
+        matrix/new_matrix.c
+        matrix/new_matrix_2.c
+#        train/glfw_texture_sample.c
+        glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/Cellar/glfw/3.3.8/include/)
+target_include_directories(${PROJECT_NAME} PUBLIC ./bmp_process)
+target_include_directories(${PROJECT_NAME} PUBLIC ./matrix)
 target_link_directories(${PROJECT_NAME} PUBLIC "/opt/homebrew/lib")
 target_link_libraries(${PROJECT_NAME} PUBLIC -lglfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Cocoa")
