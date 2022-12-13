@@ -22,6 +22,11 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
         matrix/matrix_test.c
         matrix/new_matrix.c
         matrix/new_matrix_2.c
+		matrix/matrix_rev_x.c
+		matrix/matrix_rev_y.c
+		matrix/matrix_rev_z.c
+		matrix/matrix_trans.c
+		matrix/matrix_scale.c
 #        train/glfw_texture_sample.c
         glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
