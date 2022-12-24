@@ -1,11 +1,12 @@
 #include <matrix.h>
 
-int		matrix_multi_calc_elem(const matrix *self, const matrix *that,
+float	matrix_multi_calc_elem(const matrix *self, const matrix *that,
 							   const int row, const int column) {
-	int res = 0, i = -1;
+	float res = 0;
+	int i = -1;
 	while (++i < self->columns) {
 		res += self->data[self->columns * row + i]
-				* that->data[i * self->columns + column];
+				* that->data[i * that->columns + column];
 	}
 	return res;
 }

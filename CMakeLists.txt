@@ -19,7 +19,7 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
         matrix/matrix_multi.c
         matrix/matrix_scal_add.c
         matrix/matrix_scal_multi.c
-        matrix/matrix_test.c
+#        matrix/matrix_test.c
         matrix/new_matrix.c
         matrix/new_matrix_2.c
 		matrix/matrix_rev_x.c
@@ -28,13 +28,16 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
 		matrix/matrix_trans.c
 		matrix/matrix_scale.c
 #        train/glfw_texture_sample.c
+		matrix/matrix_ctr_glspec.c
+		matrix/new_matrix_glspec.c
+		train/glfw_matrix_transform.c
         glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/Cellar/glfw/3.3.8/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC ./bmp_process)
 target_include_directories(${PROJECT_NAME} PUBLIC ./matrix)
 target_link_directories(${PROJECT_NAME} PUBLIC "/opt/homebrew/lib")
-target_link_libraries(${PROJECT_NAME} PUBLIC -lglfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC -lglfw -lm)
 target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Cocoa")
 target_link_libraries(${PROJECT_NAME} PUBLIC "-framework OpenGL")
 
