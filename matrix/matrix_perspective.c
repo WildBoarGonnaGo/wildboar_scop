@@ -13,3 +13,22 @@
 	mat_set(to_return, 3, 4, -(2 * far * near) / (far - near));
 	return (to_return);
 }*/
+
+#include <matrix.h>
+
+void	matrix_perspective(matrix **self, float rad,
+						   float ratio, float near, float far) {
+	matrix	*tmp;
+	float	half_angle;
+
+	tmp = new_matrix_2(4, 4);
+	half_angle = tanf(rad / 2);
+	tmp->data[0] = 1.0f / (ratio * half_angle);
+	tmp->data[5] = 1.0f / half_angle;
+	tmp->data[10] = -1.0f * (far + near) / (far - near);
+	tmp->data[11] = -2.0f * far * near / (far - near);
+	tmp->data[14] = -1.0f;
+	matrix_multi(self, tmp);
+	delete_matrix(&tmp);
+}
+

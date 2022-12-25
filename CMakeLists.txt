@@ -27,10 +27,13 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
 		matrix/matrix_rev_z.c
 		matrix/matrix_trans.c
 		matrix/matrix_scale.c
+		matrix/matrix_perspective.c
+		matrix/matrix_perspective_ret.c
 #        train/glfw_texture_sample.c
 		matrix/matrix_ctr_glspec.c
 		matrix/new_matrix_glspec.c
-		train/glfw_matrix_transform.c
+#		train/glfw_matrix_transform.c
+		train/glfw_view_transform.c
         glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/Cellar/glfw/3.3.8/include/)
