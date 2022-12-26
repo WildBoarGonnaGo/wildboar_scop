@@ -173,7 +173,11 @@ int main(int argc, char *argv[]) {
 	matrix	*view = new_matrix_glspec();
 	float	view_trans[] = {0.0f, 0.0f, -3.0f};
 	matrix_trans(&view, view_trans);
-
+	/*
+	 glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f,
+	100.0f);
+	 * */
 
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
