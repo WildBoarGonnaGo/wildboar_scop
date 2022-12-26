@@ -165,8 +165,16 @@ int main(int argc, char *argv[]) {
 	glUniform1i(glGetUniformLocation(prog, "texture2"), 1);
 
 	//View transformation to 3d view
+	//model
 	matrix	*model = new_matrix_glspec();
-	m
+	matrix_rev_x(&model, -55.0f * M_PI / 180.0f);
+	//view matrix by translating model along 'z' axis
+	//note that we're translating the scene in reverse direction
+	matrix	*view = new_matrix_glspec();
+	float	view_trans[] = {0.0f, 0.0f, -3.0f};
+	matrix_trans(&view, view_trans);
+
+
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
