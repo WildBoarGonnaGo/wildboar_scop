@@ -122,7 +122,7 @@ int 	main(int argc, char *argv[]) {
 								  "uniform sampler2D texture1;\n"
 								  "uniform sampler2D texture2;\n"
 								  "void main() {\n"
-								  "FragColor = mix(texture(texture1, outTexCoord), texture(texture2, outTexCoord), 0.2);\n"
+								  "FragRes = mix(texture(texture1, outTexCoord), texture(texture2, outTexCoord), 0.2);\n"
 								  "}";
 
 	if (!glfwInit()) {
@@ -202,11 +202,13 @@ int 	main(int argc, char *argv[]) {
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(prog);
 	glUniform1i(glGetUniformLocation(prog, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(prog, "texture2"), 1);
+
+	matrix	*view = new_matrix_glspec();
+
 
 	glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
 	while (!glfwWindowShouldClose(window)) {
