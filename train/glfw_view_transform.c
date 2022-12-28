@@ -58,8 +58,11 @@ int main(int argc, char *argv[]) {
 								 "layout (location = 2) in vec2 aTexCoord;\n"
 								 "out vec4 outColor;\n"
 								 "out vec2 texCoord;\n"
+								 "uniform mat4 model;\n"
+								 "uniform mat4 view;\n"
+								 "uniform mat4 projection;\n"
 								 "void main() {\n"
-								 "gl_Position = vec4(aPos, 1.0f);\n"
+								 "gl_Position = vec4(aPos, 1.0f) * model * view * projection;\n"
 								 "outColor = vec4(inColor, 1.0f);\n"
 								 "texCoord = aTexCoord;\n"
 								 "}\0";
@@ -168,17 +171,40 @@ int main(int argc, char *argv[]) {
 	//model
 	matrix	*model = new_matrix_glspec();
 	matrix_rev_x(&model, -55.0f * M_PI / 180.0f);
+	printf("model matrix:\n");
+	for (int i = 0; i < model->rows; ++i) {
+		for (int j = 0; j < model->columns; ++j) {
+			printf("%.3f ", model->data[i * model->columns + j]);
+		}
+		write(1, "\n", 1);
+	}
+	write(1, "\n", 1);
 	//view matrix by translating model along 'z' axis
 	//note that we're translating the scene in reverse direction
 	matrix	*view = new_matrix_glspec();
 	float	view_trans[] = {0.0f, 0.0f, -3.0f};
 	matrix_trans(&view, view_trans);
+	printf("view matrix:\n");
+	for (int i = 0; i < view->rows; ++i) {
+		for (int j = 0; j < view->columns; ++j) {
+			printf("%.3f ", view->data[i * view->columns + j]);
+		}
+		write(1, "\n", 1);
+	}
+	write(1, "\n", 1);
 	/*
 	 glm::mat4 projection;
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f,
 	100.0f);
 	 * */
-
+	matrix	*proj = matrix_perspective_ret(30.0f * M_PI / 180.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+	printf("projection matrix:\n");
+	for (int i = 0; i < proj->rows; ++i) {
+		for (int j = 0; j < proj->columns; ++j) {
+			printf("%.3f ", proj->data[i * proj->columns + j]);
+		}
+		write(1, "\n", 1);
+	}
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
@@ -186,6 +212,16 @@ int main(int argc, char *argv[]) {
 		pressEsc(window);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(prog);
+		//projection matrix location
+		int projLoc = glGetUniformLocation(prog, "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj->data);
+		//view matrix location
+		int viewLoc = glGetUniformLocation(prog, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view->data);
+		//model matrix location
+		int	modelLoc = glGetUniformLocation(prog, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model->data);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, text);
 		glActiveTexture(GL_TEXTURE1);
@@ -199,6 +235,9 @@ int main(int argc, char *argv[]) {
 		glfwPollEvents();
 	}
 	glDeleteProgram(prog);
+	delete_matrix(&model);
+	delete_matrix(&view);
+	delete_matrix(&proj);
 	delete_bmpProc(&texture_1);
 	glfwTerminate();
 }
