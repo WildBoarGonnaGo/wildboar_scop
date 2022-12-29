@@ -29,6 +29,8 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
 		matrix/matrix_scale.c
 		matrix/matrix_perspective.c
 		matrix/matrix_perspective_ret.c
+		matrix/matrix_multi_rev.c
+		matrix/matrix_multi_rev_ret.c
 #        train/glfw_texture_sample.c
 		matrix/matrix_ctr_glspec.c
 		matrix/new_matrix_glspec.c

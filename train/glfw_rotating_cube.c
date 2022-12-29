@@ -3,6 +3,11 @@
 #include <bmp_process.h>
 #include <matrix.h>
 
+void pressEsc(GLFWwindow *window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
 void	err_println(const char *str) {
 	write(2, str, strlen(str));
 	write(2, "\n", 1);
@@ -16,42 +21,25 @@ void	framebufferCallback(GLFWwindow *window, GLint width, GLint height) {
 	glViewport(0, 0, width, height);
 }
 
-/*
- vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &sourceVertexShader, NULL);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char *tmp = "glfw_time_green: ";
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		write(2, tmp, strlen(tmp));
-		write(2, infoLog, strlen(infoLog));
-		write(2, "\n", 1);
-		glfwTerminate();
-		return -1;
-	}
- * */
-GLint	init_shader(GLint type, const char *shader_source) {
-	GLint	id;
+void	init_shader(GLint *id, GLint type, const char *shader_source) {
 	GLint	success;
 	char	infoLog[512];
 
-	id = glCreateShader(type);
-	glShaderSource(id, 1, shader_source, NULL);
-	glCompileShader(id);
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	*id = glCreateShader(type);
+	glShaderSource(*id, 1, &shader_source, NULL);
+	glCompileShader(*id);
+	glGetShaderiv(*id, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		err_print("glfw_rotating_cube: init_shader: ");
-		glGetShaderInfoLog(id, 512, NULL, infoLog);
+		glGetShaderInfoLog(*id, 512, NULL, infoLog);
 		err_println(infoLog);
-		return -1;
+		*id = -1;
 	}
-	return id;
 }
 
 int 	main(int argc, char *argv[]) {
-	GLint 		width = 800, height = 600, sucess;
-	GLuint		vao, vbo, vertexShader, fragShader, prog, text1, text2;
+	GLint 		width = 800, height = 600, sucess, vertexShader, fragShader, prog;
+	GLuint		vao, vbo, text1, text2;
 	char		infoLog[512];
 	GLFWwindow	*window;
 
@@ -105,25 +93,25 @@ int 	main(int argc, char *argv[]) {
 		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
 		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 	};
-	char	*vertex_shader_source = "# version 330 core\n"
-									"layout (location = 0) in vec3 aPos;\n"
-									"layout (location = 1) in vec2 inTexCoord;\n"
-									"uniform mat4 model;\n"
-									"uniform mat4 view;\n"
-									"uniform mat4 projection;\n"
-									"out vec2 outTexCoord;\n"
-									"void main() {\n"
-									"gl_Position = vec4(aPos, 1.0) * model * view * projection;\n"
-									"outTexCoord = inTexCoord;\n"
-									"};";
-	char	*frag_shader_source = "# version 330 core\n"
-								  "in vec2 outTexCoord;\n"
-								  "out vec4 FragRes;\n"
-								  "uniform sampler2D texture1;\n"
-								  "uniform sampler2D texture2;\n"
-								  "void main() {\n"
-								  "FragRes = mix(texture(texture1, outTexCoord), texture(texture2, outTexCoord), 0.2);\n"
-								  "}";
+	GLchar *vertexShaderSource = "# version 330 core\n"
+								 "layout (location = 0) in vec3 aPos;\n"
+								 "layout (location = 1) in vec2 aTexCoord;\n"
+								 "out vec2 texCoord;\n"
+								 "uniform mat4 model;\n"
+								 "uniform mat4 view;\n"
+								 "uniform mat4 projection;\n"
+								 "void main() {\n"
+								 "gl_Position = vec4(aPos, 1.0f) * model * view * projection;\n"
+								 "texCoord = aTexCoord;\n"
+								 "}\0";
+	GLchar *fragShaderSource = "# version 330 core\n"
+							   "in vec2 texCoord;\n"
+							   "out vec4 FragColor;\n"
+							   "uniform sampler2D texture1;\n"
+							   "uniform sampler2D texture2;\n"
+							   "void main() {\n"
+							   "FragColor = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);\n"
+							   "}\0";
 
 	if (!glfwInit()) {
 		char *tmp = "glfw_rotattng_cube: error: glfw init failure";
@@ -136,7 +124,7 @@ int 	main(int argc, char *argv[]) {
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	window = glfwCreateWindow(width, height, "glfw_texture_sample", NULL, NULL);
+	window = glfwCreateWindow(width, height, "glfw_rotating_cube", NULL, NULL);
 	if (!window) {
 		char *tmp = "glfw_rotating_cube: error: window creation failure";
 		err_println(tmp);
@@ -150,19 +138,30 @@ int 	main(int argc, char *argv[]) {
 		exit (-1);
 	}
 
-	vertexShader = init_shader(GL_VERTEX_SHADER, vertex_shader_source);
-	fragShader = init_shader(GL_FRAGMENT_SHADER, frag_shader_source);
+	init_shader(&vertexShader, GL_VERTEX_SHADER, vertexShaderSource);
+	if (vertexShader == -1) {
+		glfwTerminate();
+		return -1;
+	}
+	init_shader(&fragShader, GL_FRAGMENT_SHADER, fragShaderSource);
+	if (fragShader == -1) {
+		glfwTerminate();
+		return -1;
+	}
+
 	prog = glCreateProgram();
 	glAttachShader(prog, vertexShader);
 	glAttachShader(prog, fragShader);
 	glLinkProgram(prog);
 	glGetProgramiv(prog, GL_COMPILE_STATUS, &sucess);
 	if (!sucess) {
-		glGetShaderInfoLog(prog, 512, NULL, infoLog);
-		err_print("glfw_rotating_cube: error: ");
+		char *tmp = "glfw_texture_sample: ";
+		glGetProgramInfoLog(prog, 512, NULL, infoLog);
+		err_print(tmp);
 		err_println(infoLog);
-		glfwTerminate();
-		return -1;
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragShader);
+		exit -1;
 	}
 
 	glGenVertexArrays(1, &vao);
@@ -207,15 +206,57 @@ int 	main(int argc, char *argv[]) {
 	glUniform1i(glGetUniformLocation(prog, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(prog, "texture2"), 1);
 
+	//model matrix complex revolution factors
+	float	rev_fact[] = {0.5f, 1.0f, 1.0f};
+
+	//view matrix
 	matrix	*view = new_matrix_glspec();
+	float	trans[] = {0.0f, 0.0f, -3.0f};
+	matrix_trans(&view, trans);
 
+	//projection matrix
+	matrix	*projection = matrix_perspective_ret(M_PI / 4, 800.0f / 600.0f, 0.1f, 100.0f);
 
+	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
 	while (!glfwWindowShouldClose(window)) {
-		glClear(GL_COLOR_BUFFER_BIT);
+
+		pressEsc(window);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(prog);
+		//projection matrix location
+		int projLoc = glGetUniformLocation(prog, "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, projection->data);
+		//view matrix location
+		int viewLoc = glGetUniformLocation(prog, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view->data);
+		/*model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f),
+			glm::vec3(0.5f, 1.0f, 0.0f));*/
+		//model matrix location
+		//matrix	*model = matrix_multi_rev_ret(glfwGetTime() * M_PI * 50.0f / 180.0f, rev_fact);
+		matrix	*model = new_matrix_glspec();
+		matrix_rev_y(&model, glfwGetTime() * M_PI * 50.0f / 180.0f);
+		matrix_rev_x(&model, glfwGetTime() * M_PI * 50.0f / 180.0f);
+		matrix_rev_z(&model, glfwGetTime() * M_PI * 25.0f / 180.0f);
+		int		modelLoc = glGetUniformLocation(prog, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model->data);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, text1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, text2);
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		delete_matrix(&model);
 	}
+	delete_bmpProc(&texture_1);
+	delete_bmpProc(&texture_2);
+	delete_matrix(&view);
+	delete_matrix(&projection);
 	glfwTerminate();
 	return 0;
 }

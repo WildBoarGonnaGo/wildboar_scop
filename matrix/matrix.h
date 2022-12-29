@@ -36,10 +36,13 @@ void	matrix_rev_y(matrix **self, float radians);
 void	matrix_rev_z(matrix **self, float radians);
 void	matrix_scale(matrix **self, float *data);
 void	matrix_trans(matrix **self, float *data);
+void	matrix_multi_rev(matrix **self, float rad, float *fact);
+
 //*mat_perspective(float angle, float ratio,
 //					   float near, float far)
 void	matrix_perspective(matrix **self, float rad,
 						   float ratio, float near, float far);
 matrix	*matrix_perspective_ret(float rad, float ratio, float near, float far);
+matrix	*matrix_multi_rev_ret(float rad, float *fact);
 
 #endif
