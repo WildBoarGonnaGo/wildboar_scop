@@ -8,11 +8,6 @@
 # include <stdlib.h>
 # include <math.h>
 
-typedef struct _list {
-	void			*data;
-	struct _list	*next;
-} list;
-
 typedef struct _matrix {
 	int 	rows;
 	int		columns;
