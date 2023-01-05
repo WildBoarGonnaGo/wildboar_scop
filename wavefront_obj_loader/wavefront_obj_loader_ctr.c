@@ -13,11 +13,78 @@
 }	wavefront_obj_loader;
  * */
 
+void	indicies_realloc(wavefront_obj_loader **self) {
+	int 	elem_capacity = (*self)->elem_capacity * 2;
+	GLint	*indicies;
+
+	indicies = (GLint *)malloc(sizeof(GLint) * elem_capacity);
+	for (int i = 0; i < (*self)->elem_size; ++i)
+		indicies[i] = (*self)->indicies[i];
+	free((*self)->indicies);
+	(*self)->elem_capacity = elem_capacity;
+	(*self)->indicies = indicies;
+}
+
+void	verticies_realloc(wavefront_obj_loader **self) {
+	int 	vert_capacity = (*self)->vert_capacity * 2;
+	GLfloat	*verticies;
+
+	verticies = (GLfloat *)malloc(sizeof(GLfloat) * vert_capacity);
+	for (int i = 0; i < (*self)->elem_size; ++i)
+		verticies[i] = (*self)->verticies[i];
+	free((*self)->verticies);
+	(*self)->vert_capacity = vert_capacity;
+	(*self)->verticies = verticies;
+}
+
 void	elem_preview(wavefront_obj_loader **self, char *line) {
-	char **line_split;
+	char	**line_split;
+	int 	size = -1;
+	int 	indicies[4] = {0};
 
 	line_split = ft_split(line, ' ');
-	while ()
+	while (line_split[++size]) ;
+	--size;
+	if (size == 3) {
+		indicies[1] = ft_atoi(line_split[1]);
+		indicies[2] = ft_atoi(line_split[2]);
+		indicies[3] = ft_atoi(line_split[3]);
+		if ((*self)->elem_size + 3 >= (*self)->elem_capacity)
+			indicies_realloc(self);
+
+		(*self)->indicies[(*self)->elem_size++] = indicies[1];
+		(*self)->indicies[(*self)->elem_size++] = indicies[2];
+		(*self)->indicies[(*self)->elem_size++] = indicies[3];
+		(*self)->verticies[(indicies[1] - 1) * 8 + 6] = 0.0f;
+		(*self)->verticies[(indicies[1] - 1) * 8 + 7] = 0.0f;
+		(*self)->verticies[(indicies[2] - 1) * 8 + 6] = 1.0f;
+		(*self)->verticies[(indicies[2] - 1) * 8 + 7] = 0.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 6] = 1.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 7] = 1.0f;
+	}
+	if (size == 4) {
+		indicies[1] = ft_atoi(line_split[1]);
+		indicies[2] = ft_atoi(line_split[2]);
+		indicies[3] = ft_atoi(line_split[3]);
+		indicies[4] = ft_atoi(line_split[4]);
+		if ((*self)->elem_size + 6 >= (*self)->elem_capacity)
+			indicies_realloc(self);
+
+		(*self)->indicies[(*self)->elem_size++] = indicies[1];
+		(*self)->indicies[(*self)->elem_size++] = indicies[2];
+		(*self)->indicies[(*self)->elem_size++] = indicies[3];
+		(*self)->indicies[(*self)->elem_size++] = indicies[3];
+		(*self)->indicies[(*self)->elem_size++] = indicies[4];
+		(*self)->indicies[(*self)->elem_size++] = indicies[1];
+		(*self)->verticies[(indicies[1] - 1) * 8 + 6] = 0.0f;
+		(*self)->verticies[(indicies[1] - 1) * 8 + 7] = 0.0f;
+		(*self)->verticies[(indicies[2] - 1) * 8 + 6] = 1.0f;
+		(*self)->verticies[(indicies[2] - 1) * 8 + 7] = 0.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 6] = 1.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 7] = 1.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 6] = 0.0f;
+		(*self)->verticies[(indicies[3] - 1) * 8 + 7] = 1.0f;
+	}
 }
 
 void	line_review(wavefront_obj_loader **self, char *line) {
@@ -27,6 +94,8 @@ void	line_review(wavefront_obj_loader **self, char *line) {
 
 	bzero(tmp_title, 128);
 	if (line[0] == 'v' && line[1] == ' ') {
+		if ((*self)->vert_size + 8 >= (*self)->vert_capacity)
+			verticies_realloc(self);
 		bytes = sprintf(line, "%c %f %f %f", tmp, (*self)->verticies[(*self)->vert_size],
 						(*self)->verticies[(*self)->vert_size + 1],
 						(*self)->verticies[(*self)->vert_size + 2]);
@@ -44,9 +113,8 @@ void	line_review(wavefront_obj_loader **self, char *line) {
 		sprintf(line, "%c %s", tmp, tmp_title);
 		title = ft_substr(tmp_title, 0, ft_strlen(substr));
 	}
-	else if (line[0] == 'f' && line[1] == ' ') {
-
-	}
+	else if (line[0] == 'f' && line[1] == ' ')
+		elem_preview(self, line);
 }
 
 void 	wavefront_obj_loader_ctr(wavefront_obj_loader **self, const char *file_abspath,
@@ -73,8 +141,10 @@ void 	wavefront_obj_loader_ctr(wavefront_obj_loader **self, const char *file_abs
 	(*self)->indicies = (GLint *)malloc(sizeof(GLint) * elem_capacity);
 	(*self)->elem_size = 0;
 	(*self)->elem_capacity = elem_capacity;
-	title = NULL;
+	(*self)->title = NULL;
 	while ((getline(&line, &linecapp, fd)) > 0) {
-
+		line_review(self, line);
+		free(line);
+		line = NULL;
 	}
 }
