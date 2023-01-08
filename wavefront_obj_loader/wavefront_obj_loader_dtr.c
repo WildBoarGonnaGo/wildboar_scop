@@ -14,7 +14,7 @@ typedef struct _wavefront_obj_loader {
 
 void	wavefront_obj_loader_dtr(wavefront_obj_loader **self) {
 	if ((*self)->verticies) {
-		free((*self)-verticies);
+		free((*self)->verticies);
 		(*self)->verticies = NULL;
 	}
 	if ((*self)->indicies) {

@@ -6,7 +6,7 @@ void 	delete_wavefront_obj_loader(wavefront_obj_loader **self) {
 
 		write(2, err, strlen(err));
 		write(2, "\n", 1);
-		exit -1;
+		exit (-1);
 	}
 	wavefront_obj_loader_dtr(self);
 	free(*self);

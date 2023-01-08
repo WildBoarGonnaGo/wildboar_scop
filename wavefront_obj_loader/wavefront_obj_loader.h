@@ -16,6 +16,7 @@ typedef struct _wavefront_obj_loader {
 	unsigned int	elem_size;
 	unsigned int	elem_capacity;
 	char			*title;
+	GLfloat			xy_bound[4];
 }	wavefront_obj_loader;
 
 wavefront_obj_loader	*new_wavefront_obj_loader(const char *file_abspath, unsigned int vert_capacity,

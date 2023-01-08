@@ -36,7 +36,12 @@ add_executable(${PROJECT_NAME} ./bmp_process/bmp_proc_ctor.c
 		matrix/new_matrix_glspec.c
 #		train/glfw_matrix_transform.c
 #		train/glfw_view_transform.c
-		train/glfw_rotating_cube.c
+#		train/glfw_rotating_cube.c
+		wavefront_obj_loader/delete_wavefront_obj_loader.c
+		wavefront_obj_loader/new_wavefront_obj_loader.c
+		wavefront_obj_loader/wavefront_obj_loader_ctr.c
+		wavefront_obj_loader/wavefront_obj_loader_dtr.c
+		wavefront_obj_loader/wavefront_obj_loader_test.c
         glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PUBLIC ./glad/include/)
 target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/Cellar/glfw/3.3.8/include/)
