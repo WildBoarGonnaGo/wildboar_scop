@@ -10,8 +10,10 @@ void pressEsc(GLFWwindow *window) {
 }
 
 void changeTexture(GLFWwindow *window, wavefront_obj_loader **self) {
-	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
 		(*self)->texture ^= 1;
+		usleep(65000);
+	}
 }
 
 void moveScene(GLFWwindow *window, matrix **view) {
