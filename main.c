@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	window = glfwCreateWindow(width, height, test->title, NULL, NULL);
+	window = glfwCreateWindow(width, height, realpath(argv[1], NULL), NULL, NULL);
 	if (!window) {
 		char *tmp = "scop: error: window creation failure";
 		ft_putendl_fd(tmp, 2);
