@@ -11,12 +11,16 @@
 typedef struct _wavefront_obj_loader {
 	GLfloat 		*verticies;
 	GLint			*indicies;
-	unsigned int	vert_size;
-	unsigned int	vert_capacity;
-	unsigned int	elem_size;
-	unsigned int	elem_capacity;
+	GLfloat			*output;
+	unsigned long	vert_size;
+	unsigned long	vert_capacity;
+	unsigned long	elem_size;
+	unsigned long	elem_capacity;
+	unsigned long	output_size;
+	unsigned long	output_capacity;
 	char			*title;
-	GLfloat			xy_bound[4];
+	GLfloat			xy_bound[6];
+	GLint			texture;
 }	wavefront_obj_loader;
 
 wavefront_obj_loader	*new_wavefront_obj_loader(const char *file_abspath, unsigned int vert_capacity,

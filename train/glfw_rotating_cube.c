@@ -37,6 +37,56 @@ void	init_shader(GLint *id, GLint type, const char *shader_source) {
 	}
 }
 
+GLuint	*init_objs(const GLfloat *verticies, GLint size, const bmpProc *texture_1, const bmpProc *texture_2) {
+	GLuint	*init_objs;
+
+	/*
+	 init_objs[0] - vao
+	 init_objs[1] - vbo
+	 init_objs[2] - text1
+	 init_objs[3] - text2
+	 * */
+	init_objs = (GLuint *)malloc(sizeof(GLuint) * 4);
+	glGenVertexArrays(1, &init_objs[0]);
+	glGenBuffers(1, &init_objs[1]);
+	glGenTextures(1, &init_objs[2]);
+	glGenTextures(1, &init_objs[3]);
+	glBindVertexArray(init_objs[0]);
+	glBindTexture(GL_TEXTURE_2D, init_objs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, init_objs[1]);
+	//set the texture wrapping and filtering options (on currently bound texture)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//load and generate the texture
+	//bmpProc *texture_1 = new_bmpProc(argv[1]);
+	if (texture_1->texel) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_1->width, texture_1->height, 0,
+					 GL_BGR, GL_UNSIGNED_BYTE, texture_1->texel);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	glBindTexture(GL_TEXTURE_2D, init_objs[3]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//bmpProc *texture_2 = new_bmpProc(argv[2]);
+	if (texture_2->texel) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture_2->width, texture_2->height, 0,
+					 GL_BGRA, GL_UNSIGNED_BYTE, texture_2->texel);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * size , verticies, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(sizeof(GLfloat) * 3));
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 int 	main(int argc, char *argv[]) {
 	GLint 		width = 800, height = 600, sucess, vertexShader, fragShader, prog;
 	GLuint		vao, vbo, text1, text2;
@@ -93,6 +143,9 @@ int 	main(int argc, char *argv[]) {
 		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
 		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 	};
+	GLfloat *cube_coords_alloc = (GLfloat *)malloc(sizeof(cube_coords));
+	int size = 0;
+	for (size = 0; size < sizeof(cube_coords) / sizeof(GLfloat); ++size) cube_coords_alloc[size] = cube_coords[size];
 	GLchar *vertexShaderSource = "# version 330 core\n"
 								 "layout (location = 0) in vec3 aPos;\n"
 								 "layout (location = 1) in vec2 aTexCoord;\n"
@@ -194,7 +247,7 @@ int 	main(int argc, char *argv[]) {
 					 GL_BGRA, GL_UNSIGNED_BYTE, texture_2->texel);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_coords), cube_coords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * size , cube_coords_alloc, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(sizeof(GLfloat) * 3));
@@ -202,6 +255,9 @@ int 	main(int argc, char *argv[]) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	//bmpProc *texture_1 = new_bmpProc(argv[1]);
+	//bmpProc *texture_2 = new_bmpProc(argv[2]);
+	//GLuint *objs = init_objs(cube_coords_alloc, size, texture_1, texture_2);
 	glUseProgram(prog);
 	glUniform1i(glGetUniformLocation(prog, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(prog, "texture2"), 1);
@@ -246,7 +302,7 @@ int 	main(int argc, char *argv[]) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, text2);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, size / 5);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glfwSwapBuffers(window);

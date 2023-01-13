@@ -6,7 +6,7 @@ void	matrix_dtr(matrix **self) {
 		write(2, err, strlen(err));
 		free(*self);
 		*self = NULL;
-		exit -1;
+		exit (-1);
 	}
 	free((*self)->data);
 }

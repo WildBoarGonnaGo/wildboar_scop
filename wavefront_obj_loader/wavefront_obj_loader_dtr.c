@@ -25,4 +25,8 @@ void	wavefront_obj_loader_dtr(wavefront_obj_loader **self) {
 		free((*self)->title);
 		(*self)->title = NULL;
 	}
+	if ((*self)->output) {
+		free((*self)->output);
+		(*self)->output = NULL;
+	}
 }

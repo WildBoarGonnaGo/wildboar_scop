@@ -14,7 +14,7 @@ void	matrix_ctr_glspec(matrix **self) {
 		write(2, "\n", 1);
 		free(*self);
 		*self = NULL;
-		exit -1;
+		exit (-1);
 	}
 	while (++i < 15)
 		(*self)->data[i] = 0;

@@ -15,7 +15,7 @@ void	matrix_ctr_2(matrix **self, int row, int column) {
 		write(2, "\n", 1);
 		free(*self);
 		*self = NULL;
-		exit -1;
+		exit (-1);
 	}
 	size = row * column;
 	while (++i < size)

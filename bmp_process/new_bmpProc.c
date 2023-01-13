@@ -10,7 +10,7 @@ bmpProc *new_bmpProc(const char *filename) {
 		write(2, tmp, strlen(tmp));
 		write(2, error, strlen(error));
 		putchar('\n');
-		exit -1;
+		exit (-1);
 	}
 	bmp_proc_ctor(&self, filename);
 	return self;

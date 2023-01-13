@@ -19,7 +19,7 @@ void readErrPrintln(bmpProc **this) {
 	write(2, strerror(errno), strlen(strerror(errno)));
 	putchar('\n');
 	delete_bmpProc(this);
-	exit -1;
+	exit (-1);
 }
 
 void bmp_proc_ctor(bmpProc **this, const char *filename) {
@@ -39,7 +39,7 @@ void bmp_proc_ctor(bmpProc **this, const char *filename) {
 		write(2, tmp, strlen(tmp));
 		write(2, error, strlen(error));
 		putchar('\n');
-		exit -1;
+		exit (-1);
 	}
 	(*this)->width = *(int *)&info[0x12];
 	(*this)->height = *(int *)&info[0x16];
